@@ -1,8 +1,11 @@
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:wallet_test/features/auth/auth_repository.dart';
 import 'package:wallet_test/features/cards/card_issue_page.dart';
 import 'package:wallet_test/features/cards/cards_page.dart';
 import 'package:wallet_test/features/onboarding/onboarding_page.dart';
+import 'package:wallet_test/features/router/cards_auth_redirect.dart';
 import 'package:wallet_test/features/wallet/wallet_page.dart';
 
 class AppRouter {
@@ -30,5 +33,9 @@ class AppRouter {
         builder: (context, state) => const OnboardingPage(),
       ),
     ],
+    redirect: (context, state) {
+      final authRepo = GetIt.instance<IAuthRepository>();
+      return cardsAuthRedirect(state.uri, authRepo.isAuthed);
+    },
   );
 }

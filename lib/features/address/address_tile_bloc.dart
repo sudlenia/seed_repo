@@ -7,13 +7,13 @@ import 'package:wallet_test/features/address/address_repository.dart';
 class AddressTileEvent {}
 
 class CopyTapped extends AddressTileEvent {
-  const CopyTapped(this.address);
+  CopyTapped(this.address);
 
   final String address;
 }
 
 class ResetCopied extends AddressTileEvent {
-  const ResetCopied();
+  ResetCopied();
 }
 
 class AddressTileState {
@@ -39,13 +39,20 @@ class AddressTileState {
 class AddressTileBloc extends Bloc<AddressTileEvent, AddressTileState> {
   AddressTileBloc({
     required IAddressRepository repository,
-  })  : _repository = repository {
+  })  : _repository = repository,
+        super(const AddressTileState()) {
     on<CopyTapped>(_onCopyTapped);
     on<ResetCopied>(_onResetCopied);
   }
 
   final IAddressRepository _repository;
   Timer? _resetTimer;
+
+  @override
+  Future<void> close() {
+    _resetTimer?.cancel();
+    return super.close();
+  }
 
   Future<void> _onCopyTapped(
     CopyTapped event,
@@ -61,7 +68,7 @@ class AddressTileBloc extends Bloc<AddressTileEvent, AddressTileState> {
       _resetTimer?.cancel();
       _resetTimer = Timer(
         const Duration(milliseconds: 1500),
-        () => add(const ResetCopied()),
+        () => add(ResetCopied()),
       );
     } catch (_) {
       emit(const AddressTileState(error: 'copy_failed'));

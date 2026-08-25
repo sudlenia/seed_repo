@@ -21,9 +21,11 @@ class CardIssueState {
 }
 
 class CardIssueBloc extends Bloc<CardIssueEvent, CardIssueState> {
+  // ПРАВИЛЬНЫЙ конструктор с initialState
   CardIssueBloc({
     required ICardIssuer issuer,
-  }) : _issuer = issuer {
+  }) : _issuer = issuer,
+       super(const CardIssueState()) {  // ← добавляем initialState
     on<IssueTapped>(_onIssueTapped);
   }
 
